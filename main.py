@@ -10,7 +10,12 @@ Resizes a video to 720p, using as proxy
 def convert720p(original_name, proxy_name):
     width = 1280
     height = 720
-    output_video = ffmpeg.input(original_name).filter('scale', width, height).output(proxy_name, video_bitrate=2e6, audio_bitrate=2000)  # input_video is the stream
+    input_video = ffmpeg.input(original_name)
+    #important that they get separated and then concatenated at the end, otherwise no sound can be heared
+    a1 = input_video.audio
+    v1 = input_video.video.filter('scale', width, height)
+
+    output_video = ffmpeg.output(v1, a1, proxy_name, video_bitrate=2e6, audio_bitrate=100e3)
 
     try:
         (out, err) = ffmpeg.run(output_video)
